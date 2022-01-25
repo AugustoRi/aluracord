@@ -1,34 +1,8 @@
 import appConfig from '../config.json';
+import React from 'react';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
-
-function GlobalStyle() {
-  return (
-    <style global jsx>{`
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        list-style: none;
-      }
-      body {
-        font-family: 'Open Sans', sans-serif;
-      }
-      /* App fit Height */ 
-      html, body, #__next {
-        min-height: 100vh;
-        display: flex;
-        flex: 1;
-      }
-      #__next {
-        flex: 1;
-      }
-      #__next > * {
-        flex: 1;
-      }
-      /* ./App fit Height */ 
-    `}</style>
-  );
-}
 
 function Titulo(props) {
   console.log(props);
@@ -39,8 +13,8 @@ function Titulo(props) {
       
       <style jsx>{`
         ${Tag} {
-          color: ${appConfig.theme.colors.neutrals['900']};
-          font-size: 1.3em;
+          color: ${appConfig.theme.colors.neutrals['000']};
+          font-size: 1.6em;
           font-weight: 600;
         }
       `}</style>
@@ -49,24 +23,12 @@ function Titulo(props) {
   );
 }
 
-// function HomePage() {
-//   return (
-//     <div>
-//       <GlobalStyle />
-//       <Titulo tag="h2">Boas vindas de volta!</Titulo>
-//       <h2>Discord - Alura matrix</h2>
-//     </div>
-//   )
-// }
-
-// export default HomePage
-
 export default function PaginaInicial() {
-  const username = 'peas';
+  const [username, setUserName] = useState('AugustoRi');
+  const route = useRouter();
 
   return (
     <>
-      <GlobalStyle />
       <Box
         styleSheet={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -93,6 +55,10 @@ export default function PaginaInicial() {
           {/* Formulário */}
           <Box
             as="form"
+            onSubmit={(event) => {
+              event.preventDefault();
+              route.push('/chat')
+            }}
             styleSheet={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
               width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
@@ -104,6 +70,8 @@ export default function PaginaInicial() {
             </Text>
 
             <TextField
+              value={username}
+              onChange={(event) => setUserName(event.target.value)}
               fullWidth
               textFieldColors={{
                 neutral: {
@@ -150,19 +118,22 @@ export default function PaginaInicial() {
                 borderRadius: '50%',
                 marginBottom: '16px',
               }}
-              src={`https://github.com/${username}.png`}
+              src={username.length > 2 ? `https://github.com/${username}.png` : ''}
             />
-            <Text
-              variant="body4"
-              styleSheet={{
-                color: appConfig.theme.colors.neutrals[200],
-                backgroundColor: appConfig.theme.colors.neutrals[900],
-                padding: '3px 10px',
-                borderRadius: '1000px'
-              }}
-            >
-              {username}
-            </Text>
+
+            {username.length > 2 ? 
+              <Text
+                variant="body4"
+                styleSheet={{
+                  color: appConfig.theme.colors.neutrals[200],
+                  backgroundColor: appConfig.theme.colors.neutrals[900],
+                  padding: '3px 10px',
+                  borderRadius: '1000px'
+                }}
+              >
+                {username}
+              </Text> : ''}
+            
           </Box>
           {/* Photo Area */}
         </Box>
