@@ -24,7 +24,7 @@ function Titulo(props) {
 }
 
 export default function PaginaInicial() {
-  const [username, setUserName] = useState('AugustoRi');
+  const [username, setUserName] = useState(appConfig.user);
   const route = useRouter();
 
   return (
@@ -140,4 +140,6 @@ export default function PaginaInicial() {
       </Box>
     </>
   );
+
 }
+
