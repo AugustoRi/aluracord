@@ -2,24 +2,19 @@ import { Box, Text, TextField, Image, Button } from "@skynexui/components";
 import React, { useState } from "react";
 import appConfig from "../config.json";
 
-import { username } from '../pages/index';
- 
 export default function ChatPage() {
   const [mensagem, setMensagem] = useState("");
   const [listaMensagensDoChat, setListaDeMensagensDoChat] = useState([]);
 
   function handleNovaMensagem(novaMensagem) {
     const mensagem = {
-      user: 'augusto',
+      user: "augusto",
       id: listaMensagensDoChat.length + 1,
       texto: novaMensagem,
     };
 
-    setListaDeMensagensDoChat([
-      mensagem,
-      ...listaMensagensDoChat,
-    ]);
-    setMensagem('');
+    setListaDeMensagensDoChat([mensagem, ...listaMensagensDoChat]);
+    setMensagem("");
   }
 
   return (
@@ -63,7 +58,6 @@ export default function ChatPage() {
             padding: "16px",
           }}
         >
-
           {<MessageList mensagens={listaMensagensDoChat} />}
 
           <Box
@@ -77,7 +71,7 @@ export default function ChatPage() {
               value={mensagem}
               onChange={(event) => {
                 const valor = event.target.value;
-                setMensagem(valor)
+                setMensagem(valor);
               }}
               onKeyPress={(event) => {
                 if (event.key === "Enter") {
@@ -93,12 +87,17 @@ export default function ChatPage() {
                 border: "0",
                 resize: "none",
                 borderRadius: "5px",
-                padding: "6px 8px",
+                padding: {
+                  xl: "16px",
+                  xs: "8px",
+                },
                 backgroundColor: appConfig.theme.colors.neutrals[800],
                 marginRight: "12px",
                 color: appConfig.theme.colors.neutrals[200],
               }}
-            />
+            >
+              {/* vai ser uma imagem para o button de enviar mensagem */}
+            </TextField>
           </Box>
         </Box>
       </Box>
@@ -136,7 +135,9 @@ function MessageList(props) {
     <Box
       tag="ul"
       styleSheet={{
-        overflow: "auto",
+        overflowY: "auto",
+        overflowX: "hidden",
+        wordBreak: "break-word",
         display: "flex",
         flexDirection: "column-reverse",
         flex: 1,
@@ -144,52 +145,52 @@ function MessageList(props) {
         marginBottom: "16px",
       }}
     >
-    {props.mensagens.map((mensagem) => {
-      return(
-        <Text
-          key={mensagem.id}
-          tag="li"
-          styleSheet={{
-            borderRadius: "5px",
-            padding: "6px",
-            marginBottom: "12px",
-            hover: {
-              backgroundColor: appConfig.theme.colors.neutrals[700],
-            },
-          }}
-        >
-        <Box
-          styleSheet={{
-            marginBottom: "8px",
-          }}
-        >
-          <Image
-            styleSheet={{
-              width: "20px",
-              height: "20px",
-              borderRadius: "50%",
-              display: "inline-block",
-              marginRight: "8px",
-            }}
-            src={`https://github.com/${appConfig.user}.png`}
-          />
-          <Text tag="strong">{mensagem.user}</Text>
+      {props.mensagens.map((mensagem) => {
+        return (
           <Text
+            key={mensagem.id}
+            tag="li"
             styleSheet={{
-              fontSize: "10px",
-              marginLeft: "8px",
-              color: appConfig.theme.colors.neutrals[300],
+              overflowX: "hidden",
+              borderRadius: "5px",
+              padding: "6px",
+              marginBottom: "12px",
+              hover: {
+                backgroundColor: appConfig.theme.colors.neutrals[700],
+              },
             }}
-            tag="span"
           >
-            {new Date().toLocaleDateString()}
+            <Box
+              styleSheet={{
+                marginBottom: "8px",
+              }}
+            >
+              <Image
+                styleSheet={{
+                  width: "20px",
+                  height: "20px",
+                  borderRadius: "50%",
+                  display: "inline-block",
+                  marginRight: "8px",
+                }}
+                src={`https://github.com/${appConfig.user}.png`}
+              />
+              <Text tag="strong">{mensagem.user}</Text>
+              <Text
+                styleSheet={{
+                  fontSize: "10px",
+                  marginLeft: "8px",
+                  color: appConfig.theme.colors.neutrals[300],
+                }}
+                tag="span"
+              >
+                {new Date().toLocaleDateString()}
+              </Text>
+            </Box>
+            {mensagem.texto}
           </Text>
-        </Box>
-        {mensagem.texto}
-      </Text>
-      );
-    })}
-
+        );
+      })}
     </Box>
   );
 }
