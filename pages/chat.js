@@ -24,7 +24,6 @@ export default function ChatPage() {
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: appConfig.theme.colors.primary[500],
-        // backgroundImage: `url(/images/background-${Math.floor(Math.random()*11)}.jpg)`,
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
         backgroundBlendMode: "multiply",
@@ -120,11 +119,14 @@ export default function ChatPage() {
                 <Button 
                   iconName="arrowRight" 
                   colorVariant="positive"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    handleNovaMensagem(mensagem);
+                  }}
                 />
               </Box>
             </Box>
           </Box>
-
         </Box>
       </Box>
     </Box>
