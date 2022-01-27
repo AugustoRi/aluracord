@@ -1,4 +1,4 @@
-import { Box, Text, TextField, Image, Button } from "@skynexui/components";
+import { Box, Text, TextField, Image, Button, Icon } from "@skynexui/components";
 import React, { useState } from "react";
 import appConfig from "../config.json";
 
@@ -58,47 +58,73 @@ export default function ChatPage() {
             padding: "16px",
           }}
         >
-          {<MessageList mensagens={listaMensagensDoChat} />}
+
+        <MessageList mensagens={listaMensagensDoChat} setMsg={setListaDeMensagensDoChat} />
 
           <Box
-            as="form"
-            styleSheet={{
-              display: "flex",
-              alignItems: "center",
-            }}
+            tag="footer"
           >
-            <TextField
-              value={mensagem}
-              onChange={(event) => {
-                const valor = event.target.value;
-                setMensagem(valor);
-              }}
-              onKeyPress={(event) => {
-                if (event.key === "Enter") {
-                  event.preventDefault();
-
-                  handleNovaMensagem(mensagem);
-                }
-              }}
-              placeholder="Insira sua mensagem aqui..."
-              type="textarea"
+            <Box
+              as="form"
               styleSheet={{
-                width: "100%",
-                border: "0",
-                resize: "none",
-                borderRadius: "5px",
-                padding: {
-                  xl: "16px",
-                  xs: "8px",
-                },
-                backgroundColor: appConfig.theme.colors.neutrals[800],
-                marginRight: "12px",
-                color: appConfig.theme.colors.neutrals[200],
+                display: "flex",
+                alignItems: "flex-end",
+                justifyContent: "flex-end",
               }}
             >
-              {/* vai ser uma imagem para o button de enviar mensagem */}
-            </TextField>
+              <Box
+                styleSheet={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-around",
+
+                  width: "100%",
+                  border: "0",
+                  resize: "none",
+                  borderRadius: "5px",
+                  padding: {
+                    xl: "16px",
+                    xs: "8px",
+                  },
+                  backgroundColor: appConfig.theme.colors.neutrals[800],
+                  marginRight: "12px",
+                  color: appConfig.theme.colors.neutrals[200],
+                }}
+              >
+                <TextField
+                  value={mensagem}
+                  onChange={(event) => {
+                    const valor = event.target.value;
+                    setMensagem(valor);
+                  }}
+                  onKeyPress={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+
+                      handleNovaMensagem(mensagem);
+                    }
+                  }}
+                  placeholder="Insira sua mensagem aqui..."
+                  type="textarea"
+                  styleSheet={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                    border: "0",
+                    resize: "none",
+                    backgroundColor: appConfig.theme.colors.neutrals[800],
+                    marginRight: "12px",
+                    color: appConfig.theme.colors.neutrals[200],
+                  }}
+                />
+                <Button 
+                  iconName="arrowRight" 
+                  colorVariant="positive"
+                />
+              </Box>
+            </Box>
           </Box>
+
         </Box>
       </Box>
     </Box>
@@ -130,14 +156,22 @@ function Header() {
 }
 
 function MessageList(props) {
-  console.log("MessageList", props);
+  console.log("MessageList", props.mensagens);
+
+  const handleDeletarMensagem = (e, mensagemParaDeletar) => {
+    e.preventDefault();
+
+    props.setMsg(
+      props.mensagens.filter((mensagem) => {
+        return mensagem.id !== mensagemParaDeletar;
+      })
+    )
+  };
+
   return (
     <Box
-      tag="ul"
       styleSheet={{
         overflowY: "auto",
-        overflowX: "hidden",
-        wordBreak: "break-word",
         display: "flex",
         flexDirection: "column-reverse",
         flex: 1,
@@ -145,52 +179,90 @@ function MessageList(props) {
         marginBottom: "16px",
       }}
     >
-      {props.mensagens.map((mensagem) => {
-        return (
-          <Text
-            key={mensagem.id}
-            tag="li"
-            styleSheet={{
-              overflowX: "hidden",
-              borderRadius: "5px",
-              padding: "6px",
-              marginBottom: "12px",
-              hover: {
-                backgroundColor: appConfig.theme.colors.neutrals[700],
-              },
-            }}
-          >
-            <Box
+      <Box
+        tag="ul"
+        styleSheet={{
+          wordBreak: "break-word",
+          display: "flex",
+          flexDirection: "column-reverse",
+          flex: 1,
+          color: appConfig.theme.colors.neutrals["000"],
+          marginBottom: "16px",
+        }}
+      >
+        {props.mensagens?.map((mensagem) => {
+          return (
+            <Text
+              key={mensagem.id}
+              tag="li"
               styleSheet={{
-                marginBottom: "8px",
+                overflow: "hidden",
+                borderRadius: "5px",
+                padding: "6px",
+                marginBottom: "12px",
+                hover: {
+                  backgroundColor: appConfig.theme.colors.neutrals[700],
+                },
               }}
             >
-              <Image
+              <Box
                 styleSheet={{
-                  width: "20px",
-                  height: "20px",
-                  borderRadius: "50%",
-                  display: "inline-block",
-                  marginRight: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "8px",
                 }}
-                src={`https://github.com/${appConfig.user}.png`}
-              />
-              <Text tag="strong">{mensagem.user}</Text>
-              <Text
-                styleSheet={{
-                  fontSize: "10px",
-                  marginLeft: "8px",
-                  color: appConfig.theme.colors.neutrals[300],
-                }}
-                tag="span"
               >
-                {new Date().toLocaleDateString()}
-              </Text>
-            </Box>
-            {mensagem.texto}
-          </Text>
-        );
-      })}
+                <Image
+                  styleSheet={{
+                    width: "20px",
+                    height: "20px",
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    marginRight: "8px",
+                  }}
+                  src={`https://github.com/${appConfig.user}.png`}
+                />
+                <Text tag="strong">{mensagem.user}</Text>
+                <Box
+                  styleSheet={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Text
+                    styleSheet={{
+                      fontSize: "10px",
+                      marginLeft: "8px",
+                      color: appConfig.theme.colors.neutrals[300],
+                    }}
+                    tag="span"
+                  >
+                    {new Date().toLocaleDateString()}
+                  </Text>
+
+                  <Button
+                    variant="tertiary"
+                    iconName="FaTrashAlt"
+
+                    onClick={(event) => {handleDeletarMensagem(event, mensagem.id)}}
+                    styleSheet={{
+                      color: "#fff",
+                      width: "10px",
+                      hover: {
+                        cursor: "pointer",
+                        backgroundColor: "none",
+                      },
+                    }}
+                  />
+                </Box>
+              </Box>
+              {mensagem.texto}
+            </Text>
+          );
+        })}
+      </Box>
     </Box>
   );
 }

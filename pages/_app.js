@@ -7,7 +7,9 @@ function GlobalStyle() {
         box-sizing: border-box;
         list-style: none;
       }
-      body {
+      html, body {
+        width: 100%;
+        height: 100%;
         font-family: 'Open Sans', sans-serif;
       }
       /* App fit Height */ 
