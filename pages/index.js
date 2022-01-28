@@ -56,6 +56,16 @@ export default function PaginaInicial() {
             as="form"
             onSubmit={(event) => {
               event.preventDefault();
+
+              if (username.trim() === '') {
+                alert('Preencha seu nome.');
+                return;
+              }
+              else if (username.length < 2) {
+                alert('Seu nome tem que ter, ao mínimo, 3 caracteres.');
+                return;
+              } 
+
               route.push(`/chat?username=${username}`);
             }}
             styleSheet={{
@@ -70,7 +80,9 @@ export default function PaginaInicial() {
 
             <TextField
               value={username}
-              onChange={(event) => setUserName(event.target.value)}
+              onChange={(event) => {
+                setUserName(event.target.value);
+              }}
               fullWidth
               textFieldColors={{
                 neutral: {
