@@ -1,8 +1,24 @@
+import appConfig from "../config.json";
+
 import { Box, Text, TextField, Image, Button, Icon } from "@skynexui/components";
+import { supabaseClient } from "../services/supabase";
+import { ButtonSendSticker } from "../src/components/ButtonSendSticker";
+
 import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
-import { supabaseClient } from "../services/supabase";
-import appConfig from "../config.json";
+
+function escutaMensagensTempoReal (mensagemVindaDoBanco) {
+  return supabaseClient
+    .from('mensagens')
+    .on("INSERT", (respostaPegada) => {
+      mensagemVindaDoBanco(respostaPegada);
+      console.log('resposta pegada: ', respostaPegada)
+    })
+    .on("DELETE", (respostaPegada) => {
+      mensagemVindaDoBanco(respostaPegada.old.id);
+    })
+    .subscribe();
+}
 
 export default function ChatPage() {
   const router = useRouter();
@@ -12,32 +28,54 @@ export default function ChatPage() {
 
   useEffect(() => {
     supabaseClient
-    .from('mensagens')
-    .select('*')
-    .order('id', { ascending: false })
-    .then( async ({ data }) => {
-      await data;
-      setListaDeMensagensDoChat(data);
-    });
+      .from('mensagens')
+      .select('*')
+      .order('id', { ascending: false })
+      .then(({ data }) => {
+        console.log('dados', data);
+        setListaDeMensagensDoChat(data);
+      });
 
+      const subscription = escutaMensagensTempoReal((mensagemVindaDoBanco) => {
+        console.log('Nova mensagem:', mensagemVindaDoBanco);
+        if (mensagemVindaDoBanco.eventType === "INSERT") {
+          setListaDeMensagensDoChat((valorAtualDaLista) => {
+            // console.log('valorAtualDaLista:', valorAtualDaLista);
+            console.log(mensagemVindaDoBanco)
+            console.log(valorAtualDaLista)
+            return [mensagemVindaDoBanco.new, ...valorAtualDaLista,]
+          });
+        }
+        else if (mensagemVindaDoBanco.eventType === "DELETE") {
+          setListaDeMensagensDoChat(
+            listaMensagensDoChat.filter((mensagem) => {
+              return mensagem.id !== mensagemVindaDoBanco;
+            })
+          )
+        }
+      });
+  
+      return () => {
+        subscription.unsubscribe();
+      }
   }, [])
 
-  function handleNovaMensagem(novaMensagem) {
+  function handlemensagemVindaDoBanco(mensagemVindaDoBanco) {
     const mensagem = {
+      texto: mensagemVindaDoBanco,
       user: username,
-      texto: novaMensagem,
     };
 
     supabaseClient
-    .from('mensagens')
-    .insert([
-      mensagem,
-    ])
-    .then(({ data }) => {
-      setListaDeMensagensDoChat([data[0], ...listaMensagensDoChat]);
-      mensagem["id"] = data[0].id;
-      setMensagem("");
-    })
+      .from('mensagens')
+      .insert([
+        mensagem,
+      ])
+      .then(({ data }) => {
+        mensagem["id"] = data[0].id;
+        console.log('criando mensagem :', data)
+      })
+    setMensagem("");
   }
 
   return (
@@ -123,7 +161,7 @@ export default function ChatPage() {
                     if (event.key === "Enter") {
                       event.preventDefault();
 
-                      handleNovaMensagem(mensagem);
+                      handlemensagemVindaDoBanco(mensagem);
                     }
                   }}
                   placeholder="Insira sua mensagem aqui..."
@@ -139,14 +177,26 @@ export default function ChatPage() {
                     color: appConfig.theme.colors.neutrals[200],
                   }}
                 />
-                <Button 
-                  iconName="arrowRight" 
-                  colorVariant="positive"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    handleNovaMensagem(mensagem);
-                  }}
-                />
+                {
+                  mensagem.length === 0
+                  ? (
+                    <ButtonSendSticker 
+                      onStickerClick={(sticker) => {
+                        handlemensagemVindaDoBanco(`:sticker: ${sticker}`)
+                      }}
+                    />
+                  ) 
+                  : (
+                    <Button 
+                      iconName="arrowRight" 
+                      colorVariant="positive"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        handlemensagemVindaDoBanco(mensagem);
+                      }}
+                    />
+                  )
+                }
               </Box>
             </Box>
           </Box>
@@ -187,13 +237,18 @@ function MessageList(props) {
 
   const handleDeletarMensagem = async (e, mensagemParaDeletar) => {
     e.preventDefault();
-    await supabaseClient.from('mensagens').delete().match({id: mensagemParaDeletar});
+    const { data, error } = await supabaseClient
+    .from('mensagens')
+    .delete()
+    .match({id: mensagemParaDeletar});
 
-    props.setMsg(
-      props.mensagens.filter((mensagem) => {
-        return mensagem.id !== mensagemParaDeletar;
-      })
-    )
+    if ( data ) {
+      props.setMsg(
+        props.mensagens.filter((mensagem) => {
+          return mensagem.id !== mensagemParaDeletar;
+        })
+      )
+    }
   };
 
   return (
@@ -291,7 +346,20 @@ function MessageList(props) {
 
                 </Box>
               </Box>
-              {mensagem.texto}
+              {
+                mensagem.texto.startsWith(':sticker:')
+                ? (
+                  <Image
+                    height='120px'
+                    width='120px'
+                    src={mensagem.texto.replace(':sticker:', '')} 
+                  />
+                ) 
+
+                : (
+                  mensagem.texto
+                )  
+              }
             </Text>
           );
         })}

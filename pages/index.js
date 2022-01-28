@@ -134,7 +134,7 @@ export default function PaginaInicial() {
               //   : '/images/imagem-usuario-padrao.png' }
             />
 
-            {username.length > 2 ? 
+            {username.length > 2 && (
               <Text
                 variant="body4"
                 styleSheet={{
@@ -145,7 +145,8 @@ export default function PaginaInicial() {
                 }}
               >
                 {username}
-              </Text> : ''}
+              </Text>
+            )}
             
           </Box>
           {/* Photo Area */}
