@@ -249,7 +249,8 @@ function MessageList(props) {
                     alignItems: "center",
                     marginRight: "8px",
                   }}
-                  src={`https://github.com/${mensagem.user}.png`}
+                  src='/images/imagem-usuario-padrao.png'
+                  // {`https://github.com/${mensagem.user}.png`}
                 />
                 <Text tag="strong">{mensagem.user}</Text>
                 <Box
