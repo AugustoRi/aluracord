@@ -1,20 +1,43 @@
 import { Box, Text, TextField, Image, Button, Icon } from "@skynexui/components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useRouter } from 'next/router';
+import { supabaseClient } from "../services/supabase";
 import appConfig from "../config.json";
 
 export default function ChatPage() {
+  const router = useRouter();
+  const { username } = router.query;
   const [mensagem, setMensagem] = useState("");
   const [listaMensagensDoChat, setListaDeMensagensDoChat] = useState([]);
 
+  useEffect(() => {
+    supabaseClient
+    .from('mensagens')
+    .select('*')
+    .order('id', { ascending: false })
+    .then( async ({ data }) => {
+      await data;
+      setListaDeMensagensDoChat(data);
+    });
+
+  }, [])
+
   function handleNovaMensagem(novaMensagem) {
     const mensagem = {
-      user: "augusto",
-      id: listaMensagensDoChat.length + 1,
+      user: username,
       texto: novaMensagem,
     };
 
-    setListaDeMensagensDoChat([mensagem, ...listaMensagensDoChat]);
-    setMensagem("");
+    supabaseClient
+    .from('mensagens')
+    .insert([
+      mensagem,
+    ])
+    .then(({ data }) => {
+      setListaDeMensagensDoChat([data[0], ...listaMensagensDoChat]);
+      mensagem["id"] = data[0].id;
+      setMensagem("");
+    })
   }
 
   return (
@@ -158,10 +181,13 @@ function Header() {
 }
 
 function MessageList(props) {
-  console.log("MessageList", props.mensagens);
+  const router = useRouter();
+  const { username } = router.query;
+  // console.log("MessageList", props.mensagens);
 
-  const handleDeletarMensagem = (e, mensagemParaDeletar) => {
+  const handleDeletarMensagem = async (e, mensagemParaDeletar) => {
     e.preventDefault();
+    await supabaseClient.from('mensagens').delete().match({id: mensagemParaDeletar});
 
     props.setMsg(
       props.mensagens.filter((mensagem) => {
@@ -223,7 +249,7 @@ function MessageList(props) {
                     alignItems: "center",
                     marginRight: "8px",
                   }}
-                  src={`https://github.com/${appConfig.user}.png`}
+                  src={`https://github.com/${mensagem.user}.png`}
                 />
                 <Text tag="strong">{mensagem.user}</Text>
                 <Box
@@ -231,6 +257,7 @@ function MessageList(props) {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
+                    gap: "10px",
                   }}
                 >
                   <Text
@@ -244,20 +271,23 @@ function MessageList(props) {
                     {new Date().toLocaleDateString()}
                   </Text>
 
-                  <Button
-                    variant="tertiary"
-                    iconName="FaTrashAlt"
+                  { username === mensagem.user ? 
+                    <Icon
+                      variant="tertiary"
+                      name="FaTrash"
 
-                    onClick={(event) => {handleDeletarMensagem(event, mensagem.id)}}
-                    styleSheet={{
-                      color: "#fff",
-                      width: "10px",
-                      hover: {
-                        cursor: "pointer",
-                        backgroundColor: "none",
-                      },
-                    }}
-                  />
+                      onClick={(event) => {handleDeletarMensagem(event, mensagem.id)}}
+                      styleSheet={{
+                        color: "#fff",
+                        width: "10px",
+                        hover: {
+                          cursor: "pointer",
+                          backgroundColor: "none",
+                        },
+                      }}
+                    /> 
+                  : ''}
+
                 </Box>
               </Box>
               {mensagem.texto}

@@ -24,7 +24,7 @@ function Titulo(props) {
 }
 
 export default function PaginaInicial() {
-  const [username, setUserName] = useState(appConfig.user);
+  const [username, setUserName] = useState("");
   const route = useRouter();
 
   return (
@@ -32,7 +32,7 @@ export default function PaginaInicial() {
       <Box
         styleSheet={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          backgroundImage: `url(/images/background-${Math.floor(Math.random()*11)}.jpg)`,
+          backgroundImage: 'url(/images/background-10.jpg)',
           backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
         }}
       >
@@ -56,7 +56,7 @@ export default function PaginaInicial() {
             as="form"
             onSubmit={(event) => {
               event.preventDefault();
-              route.push('/chat')
+              route.push(`/chat?username=${username}`);
             }}
             styleSheet={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
@@ -117,7 +117,9 @@ export default function PaginaInicial() {
                 borderRadius: '50%',
                 marginBottom: '16px',
               }}
-              src={username.length > 2 ? `https://github.com/${username}.png` : ''}
+              src='/images/imagem-usuario-padrao.png'
+              // { username?.length > 2 ? `https://github.com/${username}.png` 
+              //   : '/images/imagem-usuario-padrao.png' }
             />
 
             {username.length > 2 ? 
@@ -139,6 +141,4 @@ export default function PaginaInicial() {
       </Box>
     </>
   );
-
 }
-
