@@ -7,11 +7,15 @@ import { ButtonSendSticker } from "../src/components/ButtonSendSticker";
 import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 
-function escutaMensagensTempoReal (adicionaMensagem) {
+function escutaMensagensTempoReal (mensagemVindaDoBanco) {
   return supabaseClient
     .from('mensagens')
     .on("INSERT", (respostaPegada) => {
-      adicionaMensagem(respostaPegada.new);
+      mensagemVindaDoBanco(respostaPegada);
+      console.log('resposta pegada: ', respostaPegada)
+    })
+    .on("DELETE", (respostaPegada) => {
+      mensagemVindaDoBanco(respostaPegada.old.id);
     })
     .subscribe();
 }
@@ -24,29 +28,42 @@ export default function ChatPage() {
 
   useEffect(() => {
     supabaseClient
-    .from('mensagens')
-    .select('*')
-    .order('id', { ascending: false })
-    .then( async ({ data }) => {
-      await data;
-      setListaDeMensagensDoChat(data);
-    });
-
-    escutaMensagensTempoReal((novaMensagem) => {
-      // console.log('nova mensagem', novaMensagem)
-      setListaDeMensagensDoChat((valorAtualListaChat) => {
-        return [
-          novaMensagem, 
-          ...valorAtualListaChat,
-        ];
+      .from('mensagens')
+      .select('*')
+      .order('id', { ascending: false })
+      .then(({ data }) => {
+        console.log('dados', data);
+        setListaDeMensagensDoChat(data);
       });
-    });
+
+      const subscription = escutaMensagensTempoReal((mensagemVindaDoBanco) => {
+        console.log('Nova mensagem:', mensagemVindaDoBanco);
+        if (mensagemVindaDoBanco.eventType === "INSERT") {
+          setListaDeMensagensDoChat((valorAtualDaLista) => {
+            // console.log('valorAtualDaLista:', valorAtualDaLista);
+            console.log(mensagemVindaDoBanco)
+            console.log(valorAtualDaLista)
+            return [mensagemVindaDoBanco.new, ...valorAtualDaLista,]
+          });
+        }
+        else if (mensagemVindaDoBanco.eventType === "DELETE") {
+          setListaDeMensagensDoChat(
+            listaMensagensDoChat.filter((mensagem) => {
+              return mensagem.id !== mensagemVindaDoBanco;
+            })
+          )
+        }
+      });
+  
+      return () => {
+        subscription.unsubscribe();
+      }
   }, [])
 
-  function handleNovaMensagem(novaMensagem) {
+  function handlemensagemVindaDoBanco(mensagemVindaDoBanco) {
     const mensagem = {
+      texto: mensagemVindaDoBanco,
       user: username,
-      texto: novaMensagem,
     };
 
     supabaseClient
@@ -144,7 +161,7 @@ export default function ChatPage() {
                     if (event.key === "Enter") {
                       event.preventDefault();
 
-                      handleNovaMensagem(mensagem);
+                      handlemensagemVindaDoBanco(mensagem);
                     }
                   }}
                   placeholder="Insira sua mensagem aqui..."
@@ -165,7 +182,7 @@ export default function ChatPage() {
                   ? (
                     <ButtonSendSticker 
                       onStickerClick={(sticker) => {
-                        handleNovaMensagem(`:sticker: ${sticker}`)
+                        handlemensagemVindaDoBanco(`:sticker: ${sticker}`)
                       }}
                     />
                   ) 
@@ -175,7 +192,7 @@ export default function ChatPage() {
                       colorVariant="positive"
                       onClick={(event) => {
                         event.preventDefault();
-                        handleNovaMensagem(mensagem);
+                        handlemensagemVindaDoBanco(mensagem);
                       }}
                     />
                   )
@@ -220,13 +237,18 @@ function MessageList(props) {
 
   const handleDeletarMensagem = async (e, mensagemParaDeletar) => {
     e.preventDefault();
-    await supabaseClient.from('mensagens').delete().match({id: mensagemParaDeletar});
+    const { data, error } = await supabaseClient
+    .from('mensagens')
+    .delete()
+    .match({id: mensagemParaDeletar});
 
-    props.setMsg(
-      props.mensagens.filter((mensagem) => {
-        return mensagem.id !== mensagemParaDeletar;
-      })
-    )
+    if ( data ) {
+      props.setMsg(
+        props.mensagens.filter((mensagem) => {
+          return mensagem.id !== mensagemParaDeletar;
+        })
+      )
+    }
   };
 
   return (
