@@ -1,8 +1,20 @@
+import appConfig from "../config.json";
+
 import { Box, Text, TextField, Image, Button, Icon } from "@skynexui/components";
+import { supabaseClient } from "../services/supabase";
+import { ButtonSendSticker } from "../src/components/ButtonSendSticker";
+
 import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
-import { supabaseClient } from "../services/supabase";
-import appConfig from "../config.json";
+
+function escutaMensagensTempoReal (adicionaMensagem) {
+  return supabaseClient
+    .from('mensagens')
+    .on("INSERT", (respostaPegada) => {
+      adicionaMensagem(respostaPegada.new);
+    })
+    .subscribe();
+}
 
 export default function ChatPage() {
   const router = useRouter();
@@ -20,6 +32,15 @@ export default function ChatPage() {
       setListaDeMensagensDoChat(data);
     });
 
+    escutaMensagensTempoReal((novaMensagem) => {
+      // console.log('nova mensagem', novaMensagem)
+      setListaDeMensagensDoChat((valorAtualListaChat) => {
+        return [
+          novaMensagem, 
+          ...valorAtualListaChat,
+        ];
+      });
+    });
   }, [])
 
   function handleNovaMensagem(novaMensagem) {
@@ -29,15 +50,15 @@ export default function ChatPage() {
     };
 
     supabaseClient
-    .from('mensagens')
-    .insert([
-      mensagem,
-    ])
-    .then(({ data }) => {
-      setListaDeMensagensDoChat([data[0], ...listaMensagensDoChat]);
-      mensagem["id"] = data[0].id;
-      setMensagem("");
-    })
+      .from('mensagens')
+      .insert([
+        mensagem,
+      ])
+      .then(({ data }) => {
+        mensagem["id"] = data[0].id;
+        console.log('criando mensagem :', data)
+      })
+    setMensagem("");
   }
 
   return (
@@ -139,14 +160,26 @@ export default function ChatPage() {
                     color: appConfig.theme.colors.neutrals[200],
                   }}
                 />
-                <Button 
-                  iconName="arrowRight" 
-                  colorVariant="positive"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    handleNovaMensagem(mensagem);
-                  }}
-                />
+                {
+                  mensagem.length === 0
+                  ? (
+                    <ButtonSendSticker 
+                      onStickerClick={(sticker) => {
+                        handleNovaMensagem(`:sticker: ${sticker}`)
+                      }}
+                    />
+                  ) 
+                  : (
+                    <Button 
+                      iconName="arrowRight" 
+                      colorVariant="positive"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        handleNovaMensagem(mensagem);
+                      }}
+                    />
+                  )
+                }
               </Box>
             </Box>
           </Box>
@@ -291,7 +324,20 @@ function MessageList(props) {
 
                 </Box>
               </Box>
-              {mensagem.texto}
+              {
+                mensagem.texto.startsWith(':sticker:')
+                ? (
+                  <Image
+                    height='120px'
+                    width='120px'
+                    src={mensagem.texto.replace(':sticker:', '')} 
+                  />
+                ) 
+
+                : (
+                  mensagem.texto
+                )  
+              }
             </Text>
           );
         })}
