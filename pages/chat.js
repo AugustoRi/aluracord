@@ -12,7 +12,6 @@ function escutaMensagensTempoReal (mensagemVindaDoBanco) {
     .from('mensagens')
     .on("INSERT", (respostaPegada) => {
       mensagemVindaDoBanco(respostaPegada);
-      console.log('resposta pegada: ', respostaPegada)
     })
     .on("DELETE", (respostaPegada) => {
       mensagemVindaDoBanco(respostaPegada.old.id);
@@ -36,33 +35,27 @@ export default function ChatPage() {
         setListaDeMensagensDoChat(data);
       });
 
-      const subscription = escutaMensagensTempoReal((mensagemVindaDoBanco) => {
-        console.log('Nova mensagem:', mensagemVindaDoBanco);
-        if (mensagemVindaDoBanco.eventType === "INSERT") {
-          setListaDeMensagensDoChat((valorAtualDaLista) => {
-            // console.log('valorAtualDaLista:', valorAtualDaLista);
-            console.log(mensagemVindaDoBanco)
-            console.log(valorAtualDaLista)
-            return [mensagemVindaDoBanco.new, ...valorAtualDaLista,]
-          });
-        }
-        else if (mensagemVindaDoBanco.eventType === "DELETE") {
-          setListaDeMensagensDoChat(
-            listaMensagensDoChat.filter((mensagem) => {
-              return mensagem.id !== mensagemVindaDoBanco;
-            })
-          )
-        }
-      });
-  
-      return () => {
-        subscription.unsubscribe();
+    const subscription = escutaMensagensTempoReal((mensagemVindaDoBanco) => {
+      console.log('Nova mensagem:', mensagemVindaDoBanco);
+
+      if (mensagemVindaDoBanco.eventType === "INSERT") {
+        setListaDeMensagensDoChat((valorAtualDaLista) => {
+          console.log('valorAtualDaLista:', valorAtualDaLista);
+          console.log(mensagemVindaDoBanco)
+          console.log(valorAtualDaLista)
+          return [mensagemVindaDoBanco.new, ...valorAtualDaLista,]
+        });
       }
+    });
+  
+    return () => {
+      subscription.unsubscribe();
+    }
   }, [])
 
-  function handlemensagemVindaDoBanco(mensagemVindaDoBanco) {
+  function handleNovaMensagem(novaMensagem) {
     const mensagem = {
-      texto: mensagemVindaDoBanco,
+      texto: novaMensagem,
       user: username,
     };
 
@@ -161,7 +154,7 @@ export default function ChatPage() {
                     if (event.key === "Enter") {
                       event.preventDefault();
 
-                      handlemensagemVindaDoBanco(mensagem);
+                      handleNovaMensagem(mensagem);
                     }
                   }}
                   placeholder="Insira sua mensagem aqui..."
@@ -182,7 +175,7 @@ export default function ChatPage() {
                   ? (
                     <ButtonSendSticker 
                       onStickerClick={(sticker) => {
-                        handlemensagemVindaDoBanco(`:sticker: ${sticker}`)
+                        handleNovaMensagem(`:sticker: ${sticker}`)
                       }}
                     />
                   ) 
@@ -192,7 +185,7 @@ export default function ChatPage() {
                       colorVariant="positive"
                       onClick={(event) => {
                         event.preventDefault();
-                        handlemensagemVindaDoBanco(mensagem);
+                        handleNovaMensagem(mensagem);
                       }}
                     />
                   )
@@ -250,6 +243,31 @@ function MessageList(props) {
       )
     }
   };
+
+  
+  useEffect(() => {
+    supabaseClient
+      .from('mensagens')
+      .select('*')
+      .order('id', { ascending: false })
+      .then(({ data }) => {
+        props.setMsg(data);
+      })
+    
+    const subscription = escutaMensagensTempoReal((mensagemVindaDoBanco) => {
+      if (mensagemVindaDoBanco.eventType === "DELETE") {
+        props.setMsg(
+          props.mensagens.filter((mensagem) => {
+            return mensagem.id !== mensagemVindaDoBanco;
+          })
+        )
+      }
+    })
+
+    return () => {
+      subscription.unsubscribe();
+    }
+  }, [handleDeletarMensagem])
 
   return (
     <Box
