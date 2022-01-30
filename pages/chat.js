@@ -235,34 +235,24 @@ function MessageList(props) {
     .delete()
     .match({id: mensagemParaDeletar});
 
-    if ( data ) {
-      props.setMsg(
-        props.mensagens.filter((mensagem) => {
-          return mensagem.id !== mensagemParaDeletar;
-        })
-      )
-    }
+    // if ( data ) {
+    //   props.setMsg(
+    //     props.mensagens.filter((mensagem) => {
+    //       return mensagem.id !== mensagemParaDeletar;
+    //     })
+    //   )
+    // }
   };
 
   
   useEffect(() => {
-    supabaseClient
+    const subscription = supabaseClient
       .from('mensagens')
       .select('*')
       .order('id', { ascending: false })
       .then(({ data }) => {
         props.setMsg(data);
       })
-    
-    const subscription = escutaMensagensTempoReal((mensagemVindaDoBanco) => {
-      if (mensagemVindaDoBanco.eventType === "DELETE") {
-        props.setMsg(
-          props.mensagens.filter((mensagem) => {
-            return mensagem.id !== mensagemVindaDoBanco;
-          })
-        )
-      }
-    })
 
     return () => {
       subscription.unsubscribe();
