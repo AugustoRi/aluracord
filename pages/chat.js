@@ -31,18 +31,15 @@ export default function ChatPage() {
       .select('*')
       .order('id', { ascending: false })
       .then(({ data }) => {
-        console.log('dados', data);
+        // console.log('dados', data);
         setListaDeMensagensDoChat(data);
       });
 
     const subscription = escutaMensagensTempoReal((mensagemVindaDoBanco) => {
-      console.log('Nova mensagem:', mensagemVindaDoBanco);
+      // console.log('Nova mensagem:', mensagemVindaDoBanco);
 
       if (mensagemVindaDoBanco.eventType === "INSERT") {
         setListaDeMensagensDoChat((valorAtualDaLista) => {
-          console.log('valorAtualDaLista:', valorAtualDaLista);
-          console.log(mensagemVindaDoBanco)
-          console.log(valorAtualDaLista)
           return [mensagemVindaDoBanco.new, ...valorAtualDaLista,]
         });
       }
@@ -66,7 +63,6 @@ export default function ChatPage() {
       ])
       .then(({ data }) => {
         mensagem["id"] = data[0].id;
-        console.log('criando mensagem :', data)
       })
     setMensagem("");
   }
@@ -226,7 +222,6 @@ function Header() {
 function MessageList(props) {
   const router = useRouter();
   const { username } = router.query;
-  // console.log("MessageList", props.mensagens);
 
   const handleDeletarMensagem = async (e, mensagemParaDeletar) => {
     e.preventDefault();
@@ -246,7 +241,7 @@ function MessageList(props) {
 
   
   useEffect(() => {
-    const subscription = supabaseClient
+    supabaseClient
       .from('mensagens')
       .select('*')
       .order('id', { ascending: false })
@@ -254,9 +249,6 @@ function MessageList(props) {
         props.setMsg(data);
       })
 
-    return () => {
-      subscription.unsubscribe();
-    }
   }, [handleDeletarMensagem])
 
   return (
