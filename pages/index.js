@@ -1,11 +1,30 @@
 import appConfig from '../config.json';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
 
+function GerarImagensAleatorias() {  
+  const imagens = [
+    '/images/background-0.jpg',
+    '/images/background-1.jpg',
+    '/images/background-2.jpg',
+    '/images/background-3.jpg',
+    '/images/background-4.jpg',
+    '/images/background-5.jpg',
+    '/images/background-6.jpg',
+    '/images/background-7.jpg',
+    '/images/background-8.jpg',
+    '/images/background-9.jpg',
+    '/images/background-10.jpg',
+  ];
+
+  const imagemEscolhida = Math.floor(Math.random()*imagens.length)
+
+  return imagens[imagemEscolhida];
+}
+
 function Titulo(props) {
-  console.log(props);
   const Tag = props.tag;
   return (
     <>
@@ -25,14 +44,20 @@ function Titulo(props) {
 
 export default function PaginaInicial() {
   const [username, setUserName] = useState("");
+  const [image, setImage] = useState("");
   const route = useRouter();
+
+  useEffect(() => {
+    setImage(GerarImagensAleatorias());
+  }, [image])
+
 
   return (
     <>
       <Box
         styleSheet={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          backgroundImage: 'url(/images/background-10.jpg)',
+          backgroundImage: `url(${image})`,
           backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
         }}
       >
