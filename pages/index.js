@@ -21,7 +21,7 @@ function GerarImagensAleatorias() {
 
   // const imagemEscolhida = Math.floor(Math.random()*imagens.length)
 
-  return imagens[2];
+  return imagens[9];
 }
 
 function Titulo(props) {

@@ -89,7 +89,10 @@ export default function ChatPage() {
           borderRadius: "5px",
           backgroundColor: appConfig.theme.colors.default[300],
           height: "100vh",
-          maxWidth: "85vw",
+          maxWidth: {
+            xs: "90vw",
+            xl: "85vw",
+          },
           maxHeight: "90vh",
           padding: "32px",
         }}
@@ -104,7 +107,7 @@ export default function ChatPage() {
             backgroundColor: appConfig.theme.colors.default[200],
             flexDirection: "column",
             borderRadius: "5px",
-            padding: "16px",
+            padding: "16px 16px 0 16px",
           }}
         >
 
@@ -266,7 +269,7 @@ function MessageList(props) {
         flexDirection: "column-reverse",
         flex: 1,
         color: appConfig.theme.colors.neutrals["000"],
-        marginBottom: "16px",
+        // marginBottom: "16px",
       }}
     >
       <Box
@@ -304,8 +307,8 @@ function MessageList(props) {
               >
                 <Image
                   styleSheet={{
-                    width: "20px",
-                    height: "20px",
+                    width: "30px",
+                    height: "30px",
                     borderRadius: "50%",
                     display: "flex",
                     alignItems: "center",
@@ -314,7 +317,15 @@ function MessageList(props) {
                   src='/images/imagem-usuario-padrao.png'
                   // {`https://github.com/${mensagem.user}.png`}
                 />
-                <Text tag="strong">{mensagem.user}</Text>
+                <Text 
+                  tag="strong"
+                  styleSheet={{
+                    fontSize: '1.1em',
+                    fontWeight: '500',
+                  }}
+                >
+                  {mensagem.user}
+                </Text>
                 <Box
                   styleSheet={{
                     display: "flex",
@@ -325,7 +336,7 @@ function MessageList(props) {
                 >
                   <Text
                     styleSheet={{
-                      fontSize: "10px",
+                      fontSize: "0.7em",
                       marginLeft: "8px",
                       color: appConfig.theme.colors.neutrals[300],
                     }}
