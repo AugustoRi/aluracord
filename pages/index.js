@@ -19,9 +19,9 @@ function GerarImagensAleatorias() {
     '/images/background-10.jpg',
   ];
 
-  const imagemEscolhida = Math.floor(Math.random()*imagens.length)
+  // const imagemEscolhida = Math.floor(Math.random()*imagens.length)
 
-  return imagens[imagemEscolhida];
+  return imagens[2];
 }
 
 function Titulo(props) {
@@ -32,7 +32,7 @@ function Titulo(props) {
       
       <style jsx>{`
         ${Tag} {
-          color: ${appConfig.theme.colors.neutrals['000']};
+          color: ${appConfig.theme.colors.default[900]};
           font-size: 1.6em;
           font-weight: 600;
         }
@@ -127,7 +127,7 @@ export default function PaginaInicial() {
                   textColor: appConfig.theme.colors.neutrals[200],
                   mainColor: appConfig.theme.colors.neutrals[900],
                   mainColorHighlight: appConfig.theme.colors.primary[500],
-                  backgroundColor: appConfig.theme.colors.neutrals[800],
+                  backgroundColor: appConfig.theme.colors.default["050"],
                 },
               }}
             />
@@ -158,7 +158,7 @@ export default function PaginaInicial() {
               justifyContent: 'center',
               maxWidth: '200px',
               padding: { sm: '16px'},
-              backgroundColor: { sm: appConfig.theme.colors.neutrals[800]},
+              backgroundColor: { sm: appConfig.theme.colors.default["050"]},
               border: { sm: '1px solid'},
               borderColor: {sm: appConfig.theme.colors.neutrals[999]},
               borderRadius: '10px',
@@ -181,7 +181,10 @@ export default function PaginaInicial() {
                 variant="body4"
                 styleSheet={{
                   color: appConfig.theme.colors.neutrals[200],
-                  backgroundColor: appConfig.theme.colors.neutrals[900],
+                  backgroundColor: {
+                    xs: appConfig.theme.colors.default[300],
+                    xl: appConfig.theme.colors.default[400],
+                  },
                   padding: '3px 10px',
                   borderRadius: '1000px'
                 }}

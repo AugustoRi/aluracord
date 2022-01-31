@@ -73,7 +73,7 @@ export default function ChatPage() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: appConfig.theme.colors.primary[500],
+        backgroundColor: appConfig.theme.colors.default[900],
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
         backgroundBlendMode: "multiply",
@@ -87,7 +87,7 @@ export default function ChatPage() {
           flex: 1,
           boxShadow: "0 2px 10px 0 rgb(0 0 0 / 20%)",
           borderRadius: "5px",
-          backgroundColor: appConfig.theme.colors.neutrals[700],
+          backgroundColor: appConfig.theme.colors.default[300],
           height: "100vh",
           maxWidth: "85vw",
           maxHeight: "90vh",
@@ -101,21 +101,25 @@ export default function ChatPage() {
             display: "flex",
             flex: 1,
             height: "80%",
-            backgroundColor: appConfig.theme.colors.neutrals[600],
+            backgroundColor: appConfig.theme.colors.default[200],
             flexDirection: "column",
             borderRadius: "5px",
             padding: "16px",
           }}
         >
 
-        <MessageList mensagens={listaMensagensDoChat} setMsg={setListaDeMensagensDoChat} />
+          <MessageList mensagens={listaMensagensDoChat} setMsg={setListaDeMensagensDoChat} />
 
-          <Box
+
+          {/* footer */}
+        </Box>
+        <Box
             tag="footer"
           >
             <Box
               as="form"
               styleSheet={{
+                marginTop: "12px",
                 display: "flex",
                 alignItems: "flex-end",
                 justifyContent: "flex-end",
@@ -131,9 +135,8 @@ export default function ChatPage() {
                   border: "0",
                   resize: "none",
                   borderRadius: "5px",
-                  padding: '5px 8px 0 15px',
-                  backgroundColor: appConfig.theme.colors.neutrals[800],
-                  // marginRight: "12px",
+                  padding: '5px 8px 0 0',
+                  backgroundColor: appConfig.theme.colors.default[300],
                   color: appConfig.theme.colors.neutrals[200],
                 }}
               >
@@ -158,7 +161,8 @@ export default function ChatPage() {
                     width: "100%",
                     border: "0",
                     resize: "none",
-                    backgroundColor: appConfig.theme.colors.neutrals[800],
+                    padding: '12px',
+                    backgroundColor: appConfig.theme.colors.default[400],
                     marginRight: "12px",
                     color: appConfig.theme.colors.neutrals[200],
                   }}
@@ -178,6 +182,9 @@ export default function ChatPage() {
                       size="4ch"
                       styleSheet={{
                         color: "currentColor",
+                        hover: {
+                          cursor: "pointer",
+                        }
                       }}
                       // colorVariant="positive"
                       onClick={(event) => {
@@ -190,7 +197,6 @@ export default function ChatPage() {
               </Box>
             </Box>
           </Box>
-        </Box>
       </Box>
     </Box>
   );
@@ -285,7 +291,7 @@ function MessageList(props) {
                 padding: "6px",
                 marginBottom: "12px",
                 hover: {
-                  backgroundColor: appConfig.theme.colors.neutrals[700],
+                  backgroundColor: appConfig.theme.colors.default[400],
                 },
               }}
             >
