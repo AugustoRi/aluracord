@@ -88,9 +88,9 @@ export default function ChatPage() {
           boxShadow: "0 2px 10px 0 rgb(0 0 0 / 20%)",
           borderRadius: "5px",
           backgroundColor: appConfig.theme.colors.neutrals[700],
-          height: "100%",
-          maxWidth: "95%",
-          maxHeight: "95vh",
+          height: "100vh",
+          maxWidth: "85vw",
+          maxHeight: "90vh",
           padding: "32px",
         }}
       >
@@ -131,12 +131,9 @@ export default function ChatPage() {
                   border: "0",
                   resize: "none",
                   borderRadius: "5px",
-                  padding: {
-                    xl: "16px",
-                    xs: "8px",
-                  },
+                  padding: '5px 8px 0 15px',
                   backgroundColor: appConfig.theme.colors.neutrals[800],
-                  marginRight: "12px",
+                  // marginRight: "12px",
                   color: appConfig.theme.colors.neutrals[200],
                 }}
               >
@@ -176,9 +173,13 @@ export default function ChatPage() {
                     />
                   ) 
                   : (
-                    <Button 
-                      iconName="arrowRight" 
-                      colorVariant="positive"
+                    <Icon
+                      name="FaArrowCircleRight" 
+                      size="4ch"
+                      styleSheet={{
+                        color: "currentColor",
+                      }}
+                      // colorVariant="positive"
                       onClick={(event) => {
                         event.preventDefault();
                         handleNovaMensagem(mensagem);
