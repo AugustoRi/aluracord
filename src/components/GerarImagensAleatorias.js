@@ -1,15 +1,19 @@
-import primeiraImagem from '/public/images/background-0.jpg';
-import segundaImagem from '/public/images/background-1.jpg';
-import terceiraImagem from '/public/images/background-2.jpg';
+export function GerarImagensAleatorias() {  
+  const imagens = [
+    '/images/background-0.jpg',
+    '/images/background-1.jpg',
+    '/images/background-2.jpg',
+    '/images/background-3.jpg',
+    '/images/background-4.jpg',
+    '/images/background-5.jpg',
+    '/images/background-6.jpg',
+    '/images/background-7.jpg',
+    '/images/background-8.jpg',
+    '/images/background-9.jpg',
+    '/images/background-10.jpg',
+  ];
 
-const imagens = [
-  primeiraImagem,
-  segundaImagem,
-  terceiraImagem,
-];
-
-export default function GerarImagensAleatorias() {
-  const imagemEscolhida = Math.random(imagens.length);
+  const imagemEscolhida = Math.floor(Math.random()*imagens.length)
 
   return imagens[imagemEscolhida];
 }
