@@ -12,6 +12,7 @@ export function ButtonSendSticker(props) {
       }}
     >
       <Button
+        colorVariant='negative'
         styleSheet={{
           borderRadius: '50%',
           padding: '0 3px 0 0',
@@ -23,10 +24,11 @@ export function ButtonSendSticker(props) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: appConfig.theme.colors.neutrals[300],
+          backgroundColor: appConfig.theme.colors.global["400"],
           filter: isOpen ? 'grayscale(0)' : 'grayscale(1)',
           hover: {
             filter: 'grayscale(0)',
+            backgroundColor: appConfig.theme.colors.global["950"],
           }
         }}
         label="😋"
@@ -39,7 +41,7 @@ export function ButtonSendSticker(props) {
             flexDirection: 'column',
             borderRadius: '5px',
             position: 'absolute',
-            backgroundColor: appConfig.theme.colors.neutrals[800],
+            backgroundColor: appConfig.theme.colors.global["700"],
             width: {
               xs: '200px',
               sm: '290px',
@@ -85,11 +87,9 @@ export function ButtonSendSticker(props) {
                   width: '50%',
                   borderRadius: '5px',
                   padding: '10px',
-                  focus: {
-                    backgroundColor: appConfig.theme.colors.neutrals[600],
-                  },
                   hover: {
-                    backgroundColor: appConfig.theme.colors.neutrals[600],
+                    backgroundColor: appConfig.theme.colors.global[600],
+                    cursor: "pointer",
                   }
                 }}
               >

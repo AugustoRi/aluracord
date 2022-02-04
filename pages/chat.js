@@ -1,11 +1,12 @@
 import appConfig from "../config.json";
 
-import { Box, Text, TextField, Image, Button, Icon } from "@skynexui/components";
+import { Box, Text, Image, Button, Icon } from "@skynexui/components";
 import { supabaseClient } from "../services/supabase";
 import { ButtonSendSticker } from "../src/components/ButtonSendSticker";
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
+import { TextArea } from "../src/components/TextArea";
 
 function escutaMensagensTempoReal (mensagemVindaDoBanco) {
   return supabaseClient
@@ -73,11 +74,11 @@ export default function ChatPage() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: appConfig.theme.colors.primary[500],
+        backgroundColor: appConfig.theme.colors.global["950"],
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
         backgroundBlendMode: "multiply",
-        color: appConfig.theme.colors.neutrals["000"],
+        color: appConfig.theme.colors.global["050"],
       }}
     >
       <Box
@@ -87,10 +88,13 @@ export default function ChatPage() {
           flex: 1,
           boxShadow: "0 2px 10px 0 rgb(0 0 0 / 20%)",
           borderRadius: "5px",
-          backgroundColor: appConfig.theme.colors.neutrals[700],
-          height: "100%",
-          maxWidth: "95%",
-          maxHeight: "95vh",
+          backgroundColor: appConfig.theme.colors.default.primary[800],
+          height: "100vh",
+          maxWidth: {
+            xs: "90vw",
+            xl: "85vw",
+          },
+          maxHeight: "90vh",
           padding: "32px",
         }}
       >
@@ -101,21 +105,24 @@ export default function ChatPage() {
             display: "flex",
             flex: 1,
             height: "80%",
-            backgroundColor: appConfig.theme.colors.neutrals[600],
+            backgroundColor: appConfig.theme.colors.default.primary[400],
             flexDirection: "column",
             borderRadius: "5px",
-            padding: "16px",
+            padding: "16px 16px 0 16px",
           }}
         >
 
-        <MessageList mensagens={listaMensagensDoChat} setMsg={setListaDeMensagensDoChat} />
+          <MessageList mensagens={listaMensagensDoChat} setMsg={setListaDeMensagensDoChat} />
 
-          <Box
+        </Box>
+        {/* footer */}
+        <Box
             tag="footer"
           >
             <Box
               as="form"
               styleSheet={{
+                marginTop: "12px",
                 display: "flex",
                 alignItems: "flex-end",
                 justifyContent: "flex-end",
@@ -131,16 +138,12 @@ export default function ChatPage() {
                   border: "0",
                   resize: "none",
                   borderRadius: "5px",
-                  padding: {
-                    xl: "16px",
-                    xs: "8px",
-                  },
-                  backgroundColor: appConfig.theme.colors.neutrals[800],
-                  marginRight: "12px",
-                  color: appConfig.theme.colors.neutrals[200],
+                  padding: '5px 8px 0 0',
+                  backgroundColor: appConfig.theme.colors.default[800],
+                  color: appConfig.theme.colors.global["050"],
                 }}
               >
-                <TextField
+                <TextArea
                   value={mensagem}
                   onChange={(event) => {
                     const valor = event.target.value;
@@ -161,9 +164,8 @@ export default function ChatPage() {
                     width: "100%",
                     border: "0",
                     resize: "none",
-                    backgroundColor: appConfig.theme.colors.neutrals[800],
+                    padding: '12px',
                     marginRight: "12px",
-                    color: appConfig.theme.colors.neutrals[200],
                   }}
                 />
                 {
@@ -176,9 +178,16 @@ export default function ChatPage() {
                     />
                   ) 
                   : (
-                    <Button 
-                      iconName="arrowRight" 
-                      colorVariant="positive"
+                    <Icon
+                      name="FaArrowCircleRight" 
+                      size="4ch"
+                      styleSheet={{
+                        color: "currentColor",
+                        hover: {
+                          cursor: "pointer",
+                        }
+                      }}
+                      // colorVariant="positive"
                       onClick={(event) => {
                         event.preventDefault();
                         handleNovaMensagem(mensagem);
@@ -189,7 +198,6 @@ export default function ChatPage() {
               </Box>
             </Box>
           </Box>
-        </Box>
       </Box>
     </Box>
   );
@@ -213,6 +221,11 @@ function Header() {
           colorVariant="neutral"
           label="Logout"
           href="/"
+          styleSheet={{
+            hover: {
+              backgroundColor: appConfig.theme.colors.global["950"],
+            }
+          }}
         />
       </Box>
     </>
@@ -258,8 +271,8 @@ function MessageList(props) {
         display: "flex",
         flexDirection: "column-reverse",
         flex: 1,
-        color: appConfig.theme.colors.neutrals["000"],
-        marginBottom: "16px",
+        color: appConfig.theme.colors.global["000"],
+        // marginBottom: "16px",
       }}
     >
       <Box
@@ -269,7 +282,7 @@ function MessageList(props) {
           display: "flex",
           flexDirection: "column-reverse",
           flex: 1,
-          color: appConfig.theme.colors.neutrals["000"],
+          color: appConfig.theme.colors.global["000"],
           marginBottom: "16px",
         }}
       >
@@ -284,7 +297,7 @@ function MessageList(props) {
                 padding: "6px",
                 marginBottom: "12px",
                 hover: {
-                  backgroundColor: appConfig.theme.colors.neutrals[700],
+                  backgroundColor: appConfig.theme.colors.default.primary[800],
                 },
               }}
             >
@@ -297,8 +310,8 @@ function MessageList(props) {
               >
                 <Image
                   styleSheet={{
-                    width: "20px",
-                    height: "20px",
+                    width: "30px",
+                    height: "30px",
                     borderRadius: "50%",
                     display: "flex",
                     alignItems: "center",
@@ -307,7 +320,15 @@ function MessageList(props) {
                   src='/images/imagem-usuario-padrao.png'
                   // {`https://github.com/${mensagem.user}.png`}
                 />
-                <Text tag="strong">{mensagem.user}</Text>
+                <Text 
+                  tag="strong"
+                  styleSheet={{
+                    fontSize: '1.1em',
+                    fontWeight: '500',
+                  }}
+                >
+                  {mensagem.user}
+                </Text>
                 <Box
                   styleSheet={{
                     display: "flex",
@@ -318,7 +339,7 @@ function MessageList(props) {
                 >
                   <Text
                     styleSheet={{
-                      fontSize: "10px",
+                      fontSize: "0.7em",
                       marginLeft: "8px",
                       color: appConfig.theme.colors.neutrals[300],
                     }}
