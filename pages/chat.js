@@ -1,11 +1,12 @@
 import appConfig from "../config.json";
 
-import { Box, Text, TextField, Image, Button, Icon } from "@skynexui/components";
+import { Box, Text, Image, Button, Icon } from "@skynexui/components";
 import { supabaseClient } from "../services/supabase";
 import { ButtonSendSticker } from "../src/components/ButtonSendSticker";
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
+import { TextArea } from "../src/components/TextArea";
 
 function escutaMensagensTempoReal (mensagemVindaDoBanco) {
   return supabaseClient
@@ -73,11 +74,11 @@ export default function ChatPage() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: appConfig.theme.colors.default[900],
+        backgroundColor: appConfig.theme.colors.global["950"],
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
         backgroundBlendMode: "multiply",
-        color: appConfig.theme.colors.neutrals["000"],
+        color: appConfig.theme.colors.global["050"],
       }}
     >
       <Box
@@ -87,7 +88,7 @@ export default function ChatPage() {
           flex: 1,
           boxShadow: "0 2px 10px 0 rgb(0 0 0 / 20%)",
           borderRadius: "5px",
-          backgroundColor: appConfig.theme.colors.default[300],
+          backgroundColor: appConfig.theme.colors.default.primary[800],
           height: "100vh",
           maxWidth: {
             xs: "90vw",
@@ -104,7 +105,7 @@ export default function ChatPage() {
             display: "flex",
             flex: 1,
             height: "80%",
-            backgroundColor: appConfig.theme.colors.default[200],
+            backgroundColor: appConfig.theme.colors.default.primary[400],
             flexDirection: "column",
             borderRadius: "5px",
             padding: "16px 16px 0 16px",
@@ -113,9 +114,8 @@ export default function ChatPage() {
 
           <MessageList mensagens={listaMensagensDoChat} setMsg={setListaDeMensagensDoChat} />
 
-
-          {/* footer */}
         </Box>
+        {/* footer */}
         <Box
             tag="footer"
           >
@@ -139,11 +139,11 @@ export default function ChatPage() {
                   resize: "none",
                   borderRadius: "5px",
                   padding: '5px 8px 0 0',
-                  backgroundColor: appConfig.theme.colors.default[300],
-                  color: appConfig.theme.colors.neutrals[200],
+                  backgroundColor: appConfig.theme.colors.default[800],
+                  color: appConfig.theme.colors.global["050"],
                 }}
               >
-                <TextField
+                <TextArea
                   value={mensagem}
                   onChange={(event) => {
                     const valor = event.target.value;
@@ -165,9 +165,7 @@ export default function ChatPage() {
                     border: "0",
                     resize: "none",
                     padding: '12px',
-                    backgroundColor: appConfig.theme.colors.default[400],
                     marginRight: "12px",
-                    color: appConfig.theme.colors.neutrals[200],
                   }}
                 />
                 {
@@ -223,6 +221,11 @@ function Header() {
           colorVariant="neutral"
           label="Logout"
           href="/"
+          styleSheet={{
+            hover: {
+              backgroundColor: appConfig.theme.colors.global["950"],
+            }
+          }}
         />
       </Box>
     </>
@@ -268,7 +271,7 @@ function MessageList(props) {
         display: "flex",
         flexDirection: "column-reverse",
         flex: 1,
-        color: appConfig.theme.colors.neutrals["000"],
+        color: appConfig.theme.colors.global["000"],
         // marginBottom: "16px",
       }}
     >
@@ -279,7 +282,7 @@ function MessageList(props) {
           display: "flex",
           flexDirection: "column-reverse",
           flex: 1,
-          color: appConfig.theme.colors.neutrals["000"],
+          color: appConfig.theme.colors.global["000"],
           marginBottom: "16px",
         }}
       >
@@ -294,7 +297,7 @@ function MessageList(props) {
                 padding: "6px",
                 marginBottom: "12px",
                 hover: {
-                  backgroundColor: appConfig.theme.colors.default[400],
+                  backgroundColor: appConfig.theme.colors.default.primary[800],
                 },
               }}
             >

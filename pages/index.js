@@ -2,7 +2,8 @@ import appConfig from '../config.json';
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { Box, Button, Text, TextField, Image } from '@skynexui/components';
+import { Box, Button, Text, Image } from '@skynexui/components';
+import { TextArea } from '../src/components/TextArea';
 
 function GerarImagensAleatorias() {  
   const imagens = [
@@ -32,7 +33,7 @@ function Titulo(props) {
       
       <style jsx>{`
         ${Tag} {
-          color: ${appConfig.theme.colors.default[900]};
+          color: ${appConfig.theme.colors.global["000"]};
           font-size: 1.6em;
           font-weight: 600;
         }
@@ -73,11 +74,12 @@ export default function PaginaInicial() {
             },
             width: '100%', maxWidth: '700px',
             borderRadius: '5px', padding: '32px', margin: '16px',
-            boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
-            backgroundColor: 'rgba( 255, 255, 255, 0.25 )',
-            boxShadow: '0 8px 32px 0 rgba( 31, 38, 135, 0.37 )',
-            borderRadius: '10px',
-            border: '1px solid rgba( 255, 255, 255, 0.18 )',
+            backgroundColor: appConfig.theme.colors.default.primary["400"],
+            // boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
+            // backgroundColor: 'rgba( 31, 38, 135, 0.8 )',
+            // boxShadow: '0 8px 32px 0 rgba( 31, 38, 135, 0.37 )',
+            // borderRadius: '10px',
+            // border: '1px solid rgba( 31, 38, 135, 0.18 )',
           }}
         >
           {/* Formulário */}
@@ -99,7 +101,7 @@ export default function PaginaInicial() {
             }}
             styleSheet={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              width: { xs: '100%', sm: '40%' }, textAlign: 'center', marginBottom: '32px',
+              width: { xs: '100%', sm: '45%' }, textAlign: 'center', marginBottom: '32px',
             }}
           >
             <Titulo tag="h2">Boas vindas de volta!</Titulo>
@@ -107,7 +109,7 @@ export default function PaginaInicial() {
               variant="body3" 
               styleSheet={{
                 margin: '20px 0',
-                color: '#FFFF', 
+                color: appConfig.theme.colors.global["950"], 
                 fontSize: '1.2em',
                 fontWeight: '400', 
               }}
@@ -115,21 +117,12 @@ export default function PaginaInicial() {
                 {appConfig.name}
             </Text>
 
-            <TextField
+            <TextArea 
               value={username}
               onChange={(event) => {
                 setUserName(event.target.value);
               }}
               fullWidth
-              textFieldColors={{
-                
-                neutral: {
-                  textColor: appConfig.theme.colors.neutrals[200],
-                  mainColor: appConfig.theme.colors.neutrals[900],
-                  mainColorHighlight: appConfig.theme.colors.primary[500],
-                  backgroundColor: appConfig.theme.colors.default["050"],
-                },
-              }}
             />
             <Button
               type='submit'
@@ -158,7 +151,7 @@ export default function PaginaInicial() {
               justifyContent: 'center',
               maxWidth: '200px',
               padding: { sm: '16px'},
-              backgroundColor: { sm: appConfig.theme.colors.default["050"]},
+              backgroundColor: { sm: `${appConfig.theme.colors.default.primary["900"]}`},
               border: { sm: '1px solid'},
               borderColor: {sm: appConfig.theme.colors.neutrals[999]},
               borderRadius: '10px',
